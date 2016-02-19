@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@model PagedList.IPagedList<CustomAuthentication2.Models.Post>
+@using System.Linq
+@using CustomAuthentication2.Controllers
+@using CustomAuthentication2.Security
+@using PagedList.Mvc;
+<div class="page-header">
+    <h1>Welcome to Science and Technology Portal !</h1>
+    <h4>Here You can Gather all Technology Related knowledges</h4>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+            <h1 class="page-header">
+            @if (ViewBag.category == null)
+            {
+                if (ViewBag.searchKey == null)
+                {
+                    <span>Recent Posts</span>
+                }
+                else
+                {
+                    if (!Model.Any())
+                    {
+                        <span>Sorry No Post Found that matches <mark>@ViewBag.searchKey </mark> </span>
+                    }
+                    else
+                    {
+                        <span>Posts that matches with <mark>@ViewBag.searchKey</mark> keyword</span>
+                    }
+                }
+
+            }
+            else
+            {
+                if (!Model.Any())
+                {
+                    <span>Sorry Currently no post in <mark>@ViewBag.category</mark> Category</span>
+                }
+                else
+                {
+                    <span>Posts from <mark>@ViewBag.category</mark> Category</span>
+                }
+
+            }
+            
+            
+            </h1>
+            
+        @foreach (var item in Model)
+        {
+            <h2>
+                @Html.ActionLink(item.Title, "Details", "Posts", new { id = item.ID ,userlevel="public"}, htmlAttributes: null)
+            </h2>
+    <p class="lead">
+        
+        by @Html.ActionLink(item.FullName, "Index", "Posts", routeValues: new { id = item.Username ,userlevel="public"},htmlAttributes:null)
+    </p>
+    <p><span class="glyphicon glyphicon-time"></span> Posted on @item.PostingDate</p>
+
+            if (item.image != null)
+            {
+                var loc = "/" + item.image;
+                <img src=@loc class="img-responsive" alt="postimage" />
+
+            }
+            else
+            {
+                <img src="~/Images/Post/post03.jpg" class="img-responsive" alt="postimage" />
+            }
+
+            @*Image is scaled by a style code which is at the below of this page*@
+    <hr>
+            
+            
+            var c=item.Description;
+            var someString = StringExt.Truncate(c,120); 
+            ///actually we are truncating the description to show less data
+            
+    <p>@someString</p>
+            
+            @Html.ActionLink("Read More", "Details", "Posts", new { id = item.ID, userlevel = "public" }, htmlAttributes: new { @class = "btn btn-info" })
+    
+  
+  }
+            
+        </div>
+        <!-- Blog Sidebar Widgets Column -->
+        <div class="col-md-4">
+            <!-- Blog Search Well -->
+            <div class="well">
+                <h4>Blog Search</h4>
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get)){
+                <div class="input-group">
+                        <input type="text" name="searchKey" class="form-control">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                </div>
+               }
+                <!-- /.input-group -->
+            </div>
+            <!-- Blog Categories Well -->
+            <div class="well">
+                <h4>Videos</h4>
+                <iframe frameborder="0"
+                        src="http://www.youtube.com/embed/3AYoipyqOkQ"></iframe>
+               
+            </div>
+            <!-- Side Widget Well -->
+            <div class="well">
+                <h4>About Android</h4>
+                <p>Android is the most popular mobile OS built on top of linux environment.Android is used or installed in vast range of ddevices,so the users can choose smartphones from any vendor and can have flexibility</p>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+</div>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+            new { page, ViewBag.category, ViewBag.searchKey }))

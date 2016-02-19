@@ -1,0 +1,102 @@
+﻿@model CustomAuthentication2.Models.Post
+@using CustomAuthentication2.Security
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit </h2>
+<p class="text-danger">@ViewBag.warning</p>
+
+@using (Html.BeginForm("Edit", "Posts", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Post</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Description, htmlAttributes: new { @class = "form-control", rows = "10" })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Category, new List<SelectListItem>
+            {
+                                new SelectListItem() {Text = "Android", Value="android"},
+                                new SelectListItem() {Text = "Windows", Value="windows"},
+                                new SelectListItem() {Text = "Apple", Value="apple"},
+                                new SelectListItem() {Text = "Linux", Value="linux"}
+            }, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        
+
+        
+        @Html.HiddenFor(model => model.FullName)
+        @Html.HiddenFor(model => model.PostingDate)
+        @Html.HiddenFor(model => model.Username)
+        
+        @if (Model.image == null)
+        {
+            <img id="preview" src="placeholder.png" style="display:none" height="200px" width="200px" />
+        }
+        else
+        {
+            var loc = "/" + Model.image;
+            <img id="preview" src=@loc  height="200px" width="200px" />
+        }
+
+        <input type="file" name="file" onchange="previewImage(this)" accept="image/*" />
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", routeValues: new { id = SessionPersister.Username })
+</div>
+<script type="text/javascript">
+
+    function previewImage(input) {
+        var preview = document.getElementById('preview');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.style.display = "block";
+                preview.setAttribute('src', e.target.result);
+
+            }
+            reader.readAsDataURL(input.files[0]);
+
+
+        } else {
+            preview.style.display = "none";
+            preview.setAttribute('src', 'placeholder.png');
+
+
+        }
+    }
+
+    
+</script>

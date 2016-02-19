@@ -1,0 +1,187 @@
+﻿@model CustomAuthentication2.Models.Post
+@using CustomAuthentication2.Controllers
+@using CustomAuthentication2.Security
+
+@{
+    ViewBag.Title = "Details";
+}
+<br >
+
+<div class="container">
+    <div class="row">
+        <!-- Blog Post Content Column -->
+        <div class="col-lg-8">
+            <!-- Blog Post -->
+            <!-- Title -->
+            <h1>@Html.DisplayFor(model => model.Title)</h1>
+            <!-- Author -->
+            <p class="lead">
+                by
+            @if (ViewBag.UserLevel == "user")
+            {
+                @Html.ActionLink(Model.FullName, "Index", "Posts", routeValues: new { id = Model.Username, userlevel = "user" },htmlAttributes:null)
+                
+            }
+            @if (ViewBag.UserLevel == "public")
+            {
+                @Html.ActionLink(Model.FullName, "Index", "Posts", routeValues: new { id = Model.Username, userlevel = "public" }, htmlAttributes: null)
+            }
+            
+            
+                 
+                
+            </p>
+            <hr>
+            <!-- Date/Time -->
+            <p><span class="glyphicon glyphicon-time"></span> Posted on @Html.DisplayFor(model => model.PostingDate)</p>
+            <hr>
+            <!-- Preview Image -->
+            @if (Model.image != null)
+            {
+                var loc = "/" + Model.image;
+                <img src=@loc class="img-responsive" alt="postimage" />
+
+            }
+            else
+            {
+                <img src="~/Images/Post/post03.jpg" class="img-responsive" alt="postimage" />
+            }
+            
+            <hr>
+            <!-- Post Content -->
+            @{
+                var c = Model.Description;
+                var someString = StringExt.Truncate(c, 120);
+            }
+
+
+            <p class="lead">@someString</p>
+            <p>@Model.Description</p>
+            @if (ViewBag.UserLevel == "user")
+            {
+                if(Model.Username.Equals(SessionPersister.Username))
+                {
+                    <div class="btn-toolbar">
+                        @Html.ActionLink("Edit", "Edit", "Posts", new { id = Model.ID }, htmlAttributes: new { @class = "btn btn-info " })
+
+                        @using (Html.BeginForm("Delete", "Posts", FormMethod.Post, new { id="deleteform"}))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="button" id="delete" value="Delete" class="btn btn-danger form-control" />
+                            
+                            <input type="hidden" name="postID" value="@Model.ID" />
+                            //@Html.ActionLink("Delete", "Delete", "Posts", new { id =     Model.ID }, htmlAttributes: new { @class = "btn btn-danger ",id="delete" })
+                        }
+
+
+                    </div>
+                }
+            }
+            
+            
+            <hr>
+            <!-- Blog Comments -->
+            <!-- Comments Form -->
+            @if(SessionPersister.Username==null)
+            {
+                <div class="well">
+                    <h4>Please Log in /Register to leave a comment</h4>
+                </div>
+            }
+            else
+            {
+                <div class="well">
+                    <h4>Leave a Comment:</h4>
+                    @using (Html.BeginForm("PostComment", "Comment", FormMethod.Post))
+                    {
+                        <input type="hidden" name="postid" value="@Model.ID" />
+                        <input type="hidden" name="username" value="@SessionPersister.Username" />
+
+                        <div class="form-group">
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    }
+
+                </div>
+            }
+
+            
+
+
+
+
+            <hr>
+            <h4>Comments:</h4>
+            @{
+
+                var commentList = ViewBag.CommentsList;
+                //printing comments
+                foreach (CustomAuthentication2.Models.Comment com in commentList)
+                {
+                    <div class="media">
+                        <a class="pull-left" href="#">
+                            <img class="media-object" src="http://placehold.it/64x64" alt="">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="media-heading">
+                                @com.Fullname
+                                <small>@com.CommentTime</small>
+                            </h4>
+                            <p>@com.CommentDescription</p>
+                        </div>
+                    </div>
+                }
+            }
+
+
+            
+            <!-- Posted Comments -->
+            
+        </div>
+        <!-- Blog Sidebar Widgets Column -->
+        <div class="col-md-4">
+            <!-- Blog Search Well -->
+            <div class="well">
+                <h4>Blog Search</h4>
+                <div class="input-group">
+                    <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+                <!-- /.input-group -->
+            </div>
+            <!-- Blog Categories Well -->
+            <div class="well">
+                
+                <h4>Videos</h4>
+                <iframe frameborder="0"
+                        src="http://www.youtube.com/embed/3AYoipyqOkQ"></iframe>
+            </div>
+            <!-- Side Widget Well -->
+            
+                <div class="well">
+                    <h4>About Android</h4>
+                    <p>Android is the most popular mobile OS built on top of linux environment.Android is used or installed in vast range of ddevices,so the users can choose smartphones from any vendor and can have flexibility</p>
+                </div>
+            
+        </div>
+    </div>
+    
+    
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+    
+    $(document).ready(function () {
+        $("#delete").click(function () {
+            if (confirm("Are you sure?")) {
+                $("#deleteform").submit()
+            }
+            return false;
+        });
+    });
+</script>
