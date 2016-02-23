@@ -13,6 +13,7 @@ namespace CustomAuthentication2.ViewModels
         public string Username { get; set; }
 
         [Required]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required]

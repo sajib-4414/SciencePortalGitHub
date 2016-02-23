@@ -3,59 +3,170 @@
     ViewBag.Title = "Register";
 }
 
+@*script for formvalidation using formvalidation.io*@
+<!-- Bootstrap CSS v3.0.0 or higher -->
+@*already loaded via layout file,update kora lagse nuget theke*@
+
+<!-- FormValidation CSS file -->
+<link href="~/Content/formValidation.min.css" rel="stylesheet" />
+
+
+<!-- jQuery v1.9.1 or higher -->
+@*already loaded via layout,update kora lagse nuget theke*@
+
+<!-- Bootstrap JS -->
+@*already loaded via layout,update kora lagse nuget theke*@
+
+<!-- FormValidation plugin and the class supports validating Bootstrap form -->
+<script src="~/Scripts/formValidation.min.js"></script>
+<script src="~/Scripts/formValidation.bootstrap.min.js"></script>
+@*end of script files*@
+
+@*Overriding the success and error colors of formvalidation framework
+    Notice: Here loginForm is a given name to form by me,it not a predefined name
+    hence changing the name is possible ,then change to both form name and here
+    is a must
+    *@
+<style type="text/css">
+    #loginForm .has-error .control-label,
+    #loginForm .has-error .help-block,
+    #loginForm .has-error .form-control-feedback {
+        color: #f39c12;
+    }
+
+    #loginForm .has-success .control-label,
+    #loginForm .has-success .help-block,
+    #loginForm .has-success .form-control-feedback {
+        color: #18bc9c;
+    }
+</style>
+
+
 <h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" ,id="loginForm" }))
+    {
 
-    <span class="text-danger">@ViewBag.Error</span>
-    <span >@ViewBag.Success</span>
-    <h4>Create a new account.</h4>
-    <hr />
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.Username, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+        <span class="text-danger">@ViewBag.Error</span>
+        <span>@ViewBag.Success</span>
+        <h4>Create a new account.</h4>
+        <hr />
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.Username, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Username, new { @class = "form-control"  })
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control", type = "email" })
+            </div>
+            
         </div>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.FullName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.FullName, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.FullName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.FullName, new { @class = "form-control" })
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            </div>
         </div>
-    </div>
-    
-    @Html.HiddenFor(model => model.Roles,
+
+        @Html.HiddenFor(model => model.Roles,
                 new { id = "hiddenRole", Value = "employee" })
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="Register" />
+            </div>
         </div>
-    </div>
-}
+    }
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+
+<script>
+    $(document).ready(function () {
+        $('#loginForm').formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                Username: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The username is required'
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 30,
+                            message: 'The username must be more than 6 and less than 30 characters long'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_\.]+$/,
+                            message: 'The username can only consist of alphabetical, number, dot and underscore'
+                        }
+                    }
+                },
+                Email: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The Email is required'
+                        },
+                        emailAddress: {
+                            message: 'The value is not a valid email address'
+                        }
+                    }
+                },
+
+                Password: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The password is required'
+                        },
+                        stringLength: {
+                            min: 5,
+                            max: 8,
+                            message: 'The password must be more than 5 and less than 8 characters long'
+                        }
+                    }
+                },
+                FullName: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Full Name is required'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: 'Full name must be between 3-30 characters'
+                        }
+                    }
+                },
+                ConfirmPassword: {
+                    validators: {
+                        identical: {
+                            field: 'Password',
+                            message: 'passwords do not match'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
