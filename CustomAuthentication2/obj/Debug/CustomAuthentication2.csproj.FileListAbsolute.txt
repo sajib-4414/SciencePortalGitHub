@@ -136,3 +136,4 @@ H:\_mvc learning\SciencePortalGitHub\CustomAuthentication2\obj\Debug\CustomAuthe
 H:\_mvc learning\SciencePortalGitHub\CustomAuthentication2\obj\Debug\CustomAuthentication2.csproj.GenerateResource.Cache
 H:\_mvc learning\SciencePortalGitHub\CustomAuthentication2\obj\Debug\CustomAuthentication2.dll
 H:\_mvc learning\SciencePortalGitHub\CustomAuthentication2\obj\Debug\CustomAuthentication2.pdb
+H:\_mvc learning\SciencePortalGitHub\CustomAuthentication2\obj\Debug\CustomAuthentication2.csprojResolveAssemblyReference.cache
